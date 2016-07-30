@@ -15,6 +15,10 @@ configurations {
     providedRuntime
 }
 
+task stage {
+    dependsOn build
+}
+
 repositories {
     mavenCentral()
     maven { url "http://maven.vaadin.com/vaadin-addons" }
