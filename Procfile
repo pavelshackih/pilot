@@ -1,0 +1,1 @@
+web: java -Dserver.port=80 -jar  server/build/libs/server.jar
