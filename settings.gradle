@@ -1,0 +1,3 @@
+rootProject.name = 'pilot'
+include 'server'
+
