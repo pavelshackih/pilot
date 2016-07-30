@@ -16,7 +16,7 @@ configurations {
 }
 
 task stage {
-    dependsOn build
+    dependsOn jar
 }
 
 repositories {
