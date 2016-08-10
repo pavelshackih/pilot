@@ -1,87 +1,133 @@
 package ru.aim.pilot.ui;
 
+import com.vaadin.addon.tableexport.ExcelExport;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.viritin.button.ConfirmButton;
 import org.vaadin.viritin.button.MButton;
 import org.vaadin.viritin.fields.MTable;
 import org.vaadin.viritin.form.AbstractForm;
-import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 import ru.aim.pilot.model.Revision;
+import ru.aim.pilot.model.RevisionType;
+import ru.aim.pilot.model.Territory;
 import ru.aim.pilot.repository.RevisionRepository;
+import ru.aim.pilot.repository.TerritoryRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Title("Сведения по ОПО")
+@Title("Сведения")
 @SpringUI(path = "/revision")
 @Theme("valo")
 public class RevisionUI extends UI {
 
-    private final RevisionRepository repo;
+    private final RevisionRepository revisionRepository;
 
-    private final MTable<Revision> list = new MTable<>(Revision.class)
-            .withProperties("id", "subjectName", "address", "inn", "checkCount", "allViolationsCount",
-                    "fixedViolationsCount", "violationsDesc", "violationsMark")
-            .withColumnHeaders("#", "Наименование субъекта Российской Федерации",
-                    "Наименование ОПО, ГТС, наименование, адрес, ИНН эксплуатирующей организации",
-                    "ИНН организации", "Количество проверок", "Общее число нарушений", "Число устранённых нарушений",
-                    "Выявленные нарушения проверяемых систем, режима и охраны",
-                    "Отметка об устранении нарушений").withColumnWidth("address", 100).withFullWidth();
+    private TerritoryRepository territoryRepository;
+
+    @Autowired
+    public void setTerritoryRepository(TerritoryRepository territoryRepository) {
+        this.territoryRepository = territoryRepository;
+    }
+
+    private Territory territory;
+
+    private final MTable<Revision> opoTable = TableHelperKt.buildRevisionTable();
+    private final MTable<Revision> gtsTable = TableHelperKt.buildRevisionTable();
+    private MTable<Revision> currentTable = opoTable;
+
+    private RevisionType currentType = RevisionType.OPO;
 
     private Button addNew = new MButton(FontAwesome.PLUS, "Добавить", this::add);
     private Button edit = new MButton(FontAwesome.PENCIL_SQUARE_O, "Редактировать", this::edit);
     private Button delete = new ConfirmButton(FontAwesome.TRASH_O, "Удалить", "Вы действительно хотиту удалить данную запись?", this::remove);
+    private Button export = new MButton(FontAwesome.FILE, "Экспортировать в Excel", this::exportToExcel);
 
     @Autowired
-    public RevisionUI(RevisionRepository repo) {
-        this.repo = repo;
+    public RevisionUI(RevisionRepository revisionRepository) {
+        this.revisionRepository = revisionRepository;
     }
 
     @Override
     protected void init(VaadinRequest request) {
-        setContent(
-                new MVerticalLayout(
-                        new MLabel("Сведения по ОПО"),
-                        new MHorizontalLayout(addNew, edit, delete),
-                        list
-                )
-        );
-        listEntities();
+        if (request.getParameter("id") != null) {
+            String terId = request.getParameter("id");
+            territory = territoryRepository.findOne(Long.parseLong(terId));
+        }
+        if (territory != null) {
+            Page.getCurrent().setTitle(String.format("Сведения по %s", territory.getName()));
+        }
+
+        opoTable.setConverter("lastUpdateDate", new DateConverter());
+        gtsTable.setConverter("lastUpdateDate", new DateConverter());
+
+        TabSheet tabSheet = new TabSheet();
+        tabSheet.setHeight(100.0f, Unit.PERCENTAGE);
+        tabSheet.addStyleName(ValoTheme.TABSHEET_FRAMED);
+        tabSheet.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
+
+        tabSheet.addTab(opoTable, "Сведения по ОПО");
+        tabSheet.addTab(gtsTable, "Сведения по ГТС");
+
+        tabSheet.addSelectedTabChangeListener((TabSheet.SelectedTabChangeListener) event -> {
+            currentType = RevisionType.values()[event.getTabSheet().getTabIndex()];
+            adjustActionButtonState();
+        });
+
+        setContent(new MVerticalLayout(new MHorizontalLayout(addNew, edit, delete, export), tabSheet));
+
+        fillTables();
         adjustActionButtonState();
-        list.addMValueChangeListener(e -> adjustActionButtonState());
+
+        opoTable.addMValueChangeListener(e -> adjustActionButtonState());
+        gtsTable.addMValueChangeListener(e -> adjustActionButtonState());
     }
 
     private void adjustActionButtonState() {
-        boolean hasSelection = list.getValue() != null;
+        boolean hasSelection = currentTable.getValue() != null;
         edit.setEnabled(hasSelection);
         delete.setEnabled(hasSelection);
     }
 
-    private void listEntities() {
-        list.setBeans(repo.findAll());
+    private void fillTables() {
+        opoTable.setBeans(findRevision(RevisionType.OPO));
+        gtsTable.setBeans(findRevision(RevisionType.GTS));
+    }
+
+    private List<Revision> findRevision(RevisionType type) {
+        if (territory == null) {
+            return revisionRepository.findByType(type);
+        } else {
+            return revisionRepository.findByTerritoryIdAndType(territory.getId(), type);
+        }
     }
 
     private void add(ClickEvent clickEvent) {
-        edit(new Revision());
+        Revision revision = new Revision();
+        revision.setType(currentType);
+        edit(revision);
     }
 
     private void edit(ClickEvent e) {
-        edit(list.getValue());
+        edit(currentTable.getValue());
     }
 
     private void remove(ClickEvent e) {
-        repo.delete(list.getValue());
-        list.setValue(null);
-        listEntities();
+        revisionRepository.delete(gtsTable.getValue());
+        currentTable.setValue(null);
+        fillTables();
     }
 
     private void edit(final Revision revision) {
@@ -97,14 +143,21 @@ public class RevisionUI extends UI {
 
     private void saveEntry(Revision entry) {
         entry.setLastUpdateDate(LocalDateTime.now());
-        repo.save(entry);
-        listEntities();
+        revisionRepository.save(entry);
+        fillTables();
         closeWindow();
     }
 
     private void resetEntry(Revision entry) {
-        listEntities();
+        fillTables();
         closeWindow();
+    }
+
+    private void exportToExcel(Button.ClickEvent clickEvent) {
+        ExcelExport excelExport = new ExcelExport(currentTable);
+        excelExport.excludeCollapsedColumns();
+        excelExport.setReportTitle(String.format("Отчёт по %s", currentType.getUiName()));
+        excelExport.export();
     }
 
     private void closeWindow() {

@@ -17,7 +17,7 @@ data class Revision(
         var fixedViolationsCount: Int = 0,
         var violationsDesc: String? = null,
         var violationsMark: String? = null,
-        var type: Int = 0, // 0 - ОПО, 1 - ГТС
+        var type: RevisionType = RevisionType.OPO,
         @ManyToOne
         var territory: Territory? = null,
         var lastUpdateDate: LocalDateTime? = null
