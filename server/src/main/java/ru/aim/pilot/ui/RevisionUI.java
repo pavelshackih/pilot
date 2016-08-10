@@ -9,6 +9,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
@@ -82,7 +83,9 @@ public class RevisionUI extends UI {
         tabSheet.addTab(gtsTable, "Сведения по ГТС");
 
         tabSheet.addSelectedTabChangeListener((TabSheet.SelectedTabChangeListener) event -> {
-            currentType = RevisionType.values()[event.getTabSheet().getTabIndex()];
+            Component component = event.getTabSheet().getSelectedTab();
+            currentType = component == opoTable ? RevisionType.OPO : RevisionType.GTS;
+            currentTable = (MTable<Revision>) component;
             adjustActionButtonState();
         });
 
