@@ -8,13 +8,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.vaadin.viritin.ListContainer;
+import org.vaadin.viritin.fields.MTable;
 import ru.aim.pilot.model.Revision;
 import ru.aim.pilot.model.RevisionType;
 import ru.aim.pilot.model.Territory;
 import ru.aim.pilot.repository.RevisionRepository;
 import ru.aim.pilot.repository.TerritoryRepository;
 import ru.aim.pilot.ui.export.ExcelExportService;
+import ru.aim.pilot.ui.export.SpringExport;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -66,9 +67,19 @@ public class HomeController {
     void export(@RequestParam("terId") Long terId, @RequestParam("revType") int revType, HttpServletResponse response) throws Exception {
         RevisionType revisionType = RevisionType.values()[revType];
         List<Revision> list = revisionRepository.findByTerritoryIdAndType(terId, revisionType);
-        ListContainer<Revision> container = new ListContainer<>(Revision.class);
-        container.addAll(list);
-        File file = excelExportService.export(container, revisionType);
+        MTable<Revision> table = new MTable<>(Revision.class)
+                .withProperties("subjectName", "address", "inn", "typeSafeSystem", "checkCount", "allViolationsCount",
+                        "fixedViolationsCount", "violationsDesc", "violationsMark")
+                .withColumnHeaders("Наименование субъекта Российской Федерации",
+                        "Наименование ОПО, ГТС, наименование, адрес, ИНН эксплуатирующей организации",
+                        "ИНН организации", "Вид проверяемых систем, режима и охраны",
+                        "Количество проверок", "Общее число нарушений", "Число устранённых нарушений",
+                        "Выявленные нарушения проверяемых систем, режима и охраны",
+                        "Отметка об устранении нарушений").withColumnWidth("address", 100).withFullWidth();
+        table.setBeans(list);
+        SpringExport tableExport = new SpringExport(table);
+        tableExport.export();
+        File file = tableExport.getTempFile();
         InputStream inputStream = new FileInputStream(file);
         response.setContentType(ExcelExportService.EXCEL_MIME_TYPE);
         IOUtils.copy(inputStream, response.getOutputStream());

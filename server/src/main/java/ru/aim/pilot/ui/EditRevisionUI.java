@@ -36,10 +36,10 @@ public class EditRevisionUI extends UI {
     protected void init(VaadinRequest request) {
         String id = request.getParameter("id");
         terId = request.getParameter("terId");
+        revisionType = RevisionType.values()[Integer.parseInt(request.getParameter("revType"))];
         Revision revision;
         if (id == null) {
             revision = new Revision();
-            revisionType = RevisionType.values()[Integer.parseInt(request.getParameter("revType"))];
             getPage().setTitle("Добавление");
         } else {
             revision = revisionRepository.findOne(Long.parseLong(id));
@@ -67,6 +67,7 @@ public class EditRevisionUI extends UI {
     }
 
     private void redirect() {
-        getUI().getPage().setLocation("/rev?id=" + terId);
+        String tab = revisionType.name().toLowerCase();
+        getUI().getPage().setLocation("/rev?id=" + terId + "#" + tab);
     }
 }

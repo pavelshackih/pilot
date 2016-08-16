@@ -13,21 +13,33 @@
     <p class="lead"></p>
     <h1 th:text="${territory.name}"></h1>
 
+    <script>
+        $(document).ready(function(event) {
+            $('ul.nav.nav-tabs a:first').tab('show'); // Select first tab
+            $('ul.nav.nav-tabs a[href="'+ window.location.hash+ '"]').tab('show'); // Select tab by name if provided in location hash
+            $('ul.nav.nav-tabs a[data-toggle="tab"]').on('shown', function (event) {    // Update the location hash to current tab
+                window.location.hash= event.target.hash;
+            })
+        });
+    </script>
 
     <div>
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#opo" aria-controls="opo" role="tab"
-                                                      data-toggle="tab">Сведения по ОПО</a></li>
-            <li role="presentation"><a href="#gts" aria-controls="gts" role="tab" data-toggle="tab">Сведения по ГТС</a></li>
+            <li role="presentation" class="active">
+                <a href="#opo" aria-controls="opo" role="tab" data-toggle="tab">Сведения по ОПО</a>
+            </li>
+            <li role="presentation">
+                <a href="#gts" aria-controls="gts" role="tab" data-toggle="tab">Сведения по ГТС</a>
+            </li>
         </ul>
 
         <!-- Tab panes -->
         <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="opo">
+            <div role="tabpanel" class="tab-pane fade in active" id="opo">
                 <div th:replace="fragments/table(list=${opo}, headers=${headers}, type=0)"></div>
             </div>
-            <div role="tabpanel" class="tab-pane" id="gts">
+            <div role="tabpanel" class="tab-pane fade" id="gts">
                 <div th:replace="fragments/table(list=${gts}, headers=${headers}, type=1)"></div>
             </div>
         </div>
