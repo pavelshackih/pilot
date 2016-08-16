@@ -10,6 +10,8 @@ import ru.aim.pilot.model.Territory;
 import ru.aim.pilot.repository.RevisionRepository;
 import ru.aim.pilot.repository.TerritoryRepository;
 
+import java.util.Date;
+
 @Component
 public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefreshedEvent> {
 
@@ -26,17 +28,33 @@ public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefre
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         territoryRepository.save(new Territory(null, "Центральное"));
-        territoryRepository.save(new Territory(null, "Поволожское"));
-        territoryRepository.save(new Territory(null, "Юго-Западное"));
-        territoryRepository.save(new Territory(null, "Дальне-Восточное"));
+        territoryRepository.save(new Territory(null, "Уральское"));
+        territoryRepository.save(new Territory(null, "Средне-Поволжское"));
         territoryRepository.save(new Territory(null, "Сибирское"));
+        territoryRepository.save(new Territory(null, "Северо-Уральское"));
+        territoryRepository.save(new Territory(null, "Северо-Кавказское"));
         territoryRepository.save(new Territory(null, "Северо-Западное"));
+        territoryRepository.save(new Territory(null, "Северо-Восточное"));
+        territoryRepository.save(new Territory(null, "Приокское"));
+        territoryRepository.save(new Territory(null, "Приволжское"));
+        territoryRepository.save(new Territory(null, "Нижне-Волжское"));
+        territoryRepository.save(new Territory(null, "МТУ Ростехнадзора"));
+        territoryRepository.save(new Territory(null, "Ленское"));
+        territoryRepository.save(new Territory(null, "Крымское"));
+        territoryRepository.save(new Territory(null, "Кавказское"));
+        territoryRepository.save(new Territory(null, "Западно-Уральское"));
+        territoryRepository.save(new Territory(null, "Забайкальское"));
+        territoryRepository.save(new Territory(null, "Енисейское"));
+        territoryRepository.save(new Territory(null, "Дальневосточное"));
+        territoryRepository.save(new Territory(null, "Волжско-Окское"));
+        territoryRepository.save(new Territory(null, "Верхне-Донское"));
         territoryRepository.flush();
 
         for (Territory territory : territoryRepository.findAll()) {
             for (int i = 0; i < 5; i++) {
-                revisionRepository.save(new Revision(null, "test1", "test1", 1, 1, 1, 1, "test", "test", RevisionType.OPO, territory, null));
-                revisionRepository.save(new Revision(null, "test1", "test1", 1, 1, 1, 1, "test", "test", RevisionType.GTS, territory, null));
+                Date date = new Date();
+                revisionRepository.save(new Revision(null, "test1", "test2", 1, "", 1, 1, 1, "test3", "test4", RevisionType.OPO, territory, date));
+                revisionRepository.save(new Revision(null, "test1", "test2", 1, "", 1, 1, 1, "test3", "test4", RevisionType.GTS, territory, date));
             }
         }
         revisionRepository.flush();

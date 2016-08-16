@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Список территорий</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.css}" rel="stylesheet"></link>
+    <script th:src="@{/webjars/jquery/3.1.0/jquery.min.js}"></script>
+</head>
+<body>
+<div class="container">
+    <p class="lead"></p>
+    <h1>Список территорий</h1>
+    <table class="table table-striped">
+        <th:block th:each="t : ${territories}">
+            <tr>
+                <td>
+                    <a href="/territories" th:href="@{/rev(id=${t.id})}" th:text="${t.name}"></a>
+                </td>
+            </tr>
+        </th:block>
+    </table>
+</div>
+</body>
+</html>

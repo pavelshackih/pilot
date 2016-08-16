@@ -13,8 +13,9 @@ import ru.aim.pilot.model.Revision;
 public class RevisionForm extends AbstractForm<Revision> {
 
     private TextField subjectName = new MTextField("Наименование субъекта Российской Федерации");
-    private TextField address = new MTextField("Наименование ОПО, ГТС, наименование, адрес, ИНН эксплуатирующей организации");
+    private MTextArea address = new MTextArea("Наименование ОПО, ГТС, наименование, адрес, ИНН эксплуатирующей организации");
     private TextField inn = new MTextField("ИНН организации");
+    private MTextArea typeSafeSystem = new MTextArea("Вид проверяемых систем, режима и охраны");
     private IntegerField checkCount = new IntegerField().withCaption("Количество проверок");
     private IntegerField allViolationsCount = new IntegerField().withCaption("Общее число нарушений");
     private IntegerField fixedViolationsCount = new IntegerField().withCaption("Число устранённых нарушений");
@@ -32,6 +33,7 @@ public class RevisionForm extends AbstractForm<Revision> {
                         subjectName,
                         address,
                         inn,
+                        typeSafeSystem,
                         checkCount,
                         allViolationsCount,
                         fixedViolationsCount,

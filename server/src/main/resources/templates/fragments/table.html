@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<div xmlns:th="http://www.thymeleaf.org">
+    <div class="container-fluid" style="padding-top: 16px; padding-bottom: 16px;">
+        <button type="button" class="btn btn-success" id="add"
+                th:with="addUrl=@{/edit(terId=${territory.id},revType=${type})}"
+                th:onclick="'location.href=\'' + ${addUrl} + '\''"
+        >
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Добавить
+        </button>
+        <button type="button" class="btn btn-primary" id="export"
+                th:with="exportUrl=@{/export(terId=${territory.id},revType=${type})}"
+                th:onclick="'window.open(\'' + ${exportUrl} + '\')'">
+            <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Экспортировать в Excel
+        </button>
+    </div>
+    <table class="table table-striped table-bordered">
+        <thead>
+        <tr class="clickable-row">
+            <th:block th:each="h : ${headers}">
+                <td th:text="${h}"></td>
+            </th:block>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="item : ${list}">
+            <tr>
+                <td>
+                    <p th:text="${item.subjectName}"></p>
+                </td>
+                <td>
+                    <p th:text="${item.address}"></p>
+                </td>
+                <td>
+                    <p th:text="${item.inn}"></p>
+                </td>
+                <td>
+                    <p th:text="${item.typeSafeSystem}"></p>
+                </td>
+                <td>
+                    <p th:text="${item.checkCount}"></p>
+                </td>
+                <td>
+                    <p th:text="${item.allViolationsCount}"></p>
+                </td>
+                <td>
+                    <p th:text="${item.fixedViolationsCount}"></p>
+                </td>
+                <td>
+                    <p th:text="${item.violationsDesc}"></p>
+                </td>
+                <td>
+                    <p th:text="${item.violationsMark}"></p>
+                </td>
+                <td>
+                    <p th:text="${item.lastUpdateDate}"></p>
+                </td>
+                <td>
+                    <a th:href="@{/edit(terId=${territory.id},id=${item.id}, revType=${type})}">Изменить</a>
+                    <a th:href="@{/revdelete(terId=${territory.id}, revId=${item.id}, revType=${type})}">Удалить</a>
+                </td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+</div>
