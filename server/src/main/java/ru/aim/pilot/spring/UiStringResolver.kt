@@ -1,6 +1,5 @@
 package ru.aim.pilot.spring
 
-import ru.aim.pilot.model.Revision
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.declaredMemberProperties
@@ -20,13 +19,4 @@ object UiStringResolver {
     fun findUiProperties(clazz: KClass<*>): Collection<KProperty<*>> {
         return clazz.declaredMemberProperties
     }
-
-    fun getHeaders(clazz: KClass<*>) =
-            clazz.declaredMemberProperties.map {
-                val uiString = UiStringResolver.resolve(it)
-                if (uiString == null) null else uiString
-            }.filterNotNull()
-
-    fun getRevisionHeaders() = getHeaders(Revision::class)
-
 }
