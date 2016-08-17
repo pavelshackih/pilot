@@ -2,10 +2,14 @@ package ru.aim.pilot.ui;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.UI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.vaadin.viritin.button.MButton;
+import org.vaadin.viritin.layouts.MVerticalLayout;
 import ru.aim.pilot.model.Revision;
 import ru.aim.pilot.model.RevisionType;
 import ru.aim.pilot.model.Territory;
@@ -25,6 +29,8 @@ public class EditRevisionUI extends UI {
 
     private RevisionType revisionType;
     private String terId;
+
+    private Button addNew = new MButton(FontAwesome.HOME, "К списку управлений", this::home);
 
     @Autowired
     public EditRevisionUI(RevisionRepository revisionRepository, TerritoryRepository territoryRepository) {
@@ -48,7 +54,11 @@ public class EditRevisionUI extends UI {
         revisionForm.setEntity(revision);
         revisionForm.setSavedHandler(this::saveEntry);
         revisionForm.setResetHandler(this::resetEntry);
-        setContent(revisionForm);
+        setContent(new MVerticalLayout(addNew, revisionForm));
+    }
+
+    private void home(Button.ClickEvent event) {
+        getUI().getPage().setLocation("/");
     }
 
     private void resetEntry(Revision entry) {
