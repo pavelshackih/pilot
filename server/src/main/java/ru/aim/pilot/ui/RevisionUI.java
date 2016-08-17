@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 @Title("Сведения")
-@SpringUI(path = "/revision")
+@SpringUI(path = "/list")
 @Theme("valo")
 public class RevisionUI extends UI {
 
@@ -173,7 +173,7 @@ public class RevisionUI extends UI {
     }
 
     private void exportToExcel(Button.ClickEvent clickEvent) {
-        excelExportService.export(currentTable.getContainerDataSource(), currentType, this);
+        // excelExportService.export(currentTable.getContainerDataSource(), currentType, this);
     }
 
     private void closeWindow() {

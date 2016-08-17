@@ -2,14 +2,13 @@ package ru.aim.pilot.model
 
 import ru.aim.pilot.spring.UiString
 import java.util.*
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
-import javax.persistence.ManyToOne
+import javax.persistence.*
 
 @Entity
 data class Revision(
         @Id @GeneratedValue(strategy = javax.persistence.GenerationType.AUTO) var id: Long? = null,
+        @Transient
+        var order: Int = 0,
         @UiString("Наименование субъекта Российской Федерации")
         var subjectName: String? = null,
         @UiString("Наименование ОПО, ГТС, наименование, адрес, ИНН эксплуатирующей организации")
@@ -35,7 +34,7 @@ data class Revision(
         var lastUpdateDate: Date? = null
 ) {
     companion object {
-        val headers = arrayOf("Наименование субъекта Российской Федерации",
+        val headers = arrayOf("#", "Наименование субъекта Российской Федерации",
                 "Наименование ОПО, ГТС, наименование, адрес, ИНН эксплуатирующей организации",
                 "ИНН организации", "Вид проверяемых систем, режима и охраны", "Количество проверок", "Общее число нарушений",
                 "Число устранённых нарушений", "Выявленные нарушения проверяемых систем, режима и охраны",

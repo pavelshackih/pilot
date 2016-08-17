@@ -25,6 +25,9 @@
         <th:block th:each="item : ${list}">
             <tr>
                 <td>
+                    <p th:text="${item.order}"></p>
+                </td>
+                <td>
                     <p th:text="${item.subjectName}"></p>
                 </td>
                 <td>

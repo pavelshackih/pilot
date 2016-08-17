@@ -68,6 +68,6 @@ public class EditRevisionUI extends UI {
 
     private void redirect() {
         String tab = revisionType.name().toLowerCase();
-        getUI().getPage().setLocation("/rev?id=" + terId + "#" + tab);
+        getUI().getPage().setLocation("/revision/list?id=" + terId + "#" + tab);
     }
 }

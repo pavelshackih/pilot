@@ -3,14 +3,16 @@ package ru.aim.pilot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import ru.aim.pilot.model.Revision;
-import ru.aim.pilot.model.RevisionType;
-import ru.aim.pilot.model.Territory;
+import ru.aim.pilot.model.*;
+import ru.aim.pilot.repository.AuthorityRepository;
 import ru.aim.pilot.repository.RevisionRepository;
 import ru.aim.pilot.repository.TerritoryRepository;
+import ru.aim.pilot.repository.UserRepository;
 
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefreshedEvent> {
@@ -18,6 +20,15 @@ public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefre
     private final RevisionRepository revisionRepository;
 
     private final TerritoryRepository territoryRepository;
+
+    @Autowired
+    private AuthorityRepository authorityRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public DatabaseFillerOnStartup(TerritoryRepository territoryRepository, RevisionRepository revisionRepository) {
@@ -50,11 +61,22 @@ public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefre
         territoryRepository.save(new Territory(null, "Верхне-Донское"));
         territoryRepository.flush();
 
+        List<Territory> list = territoryRepository.findAll();
+        for (int i = 0; i < list.size(); i++) {
+            User user = new User(null, "user" + (i + 1), passwordEncoder.encode("123456"), true, list.get(i));
+            userRepository.save(user);
+            authorityRepository.save(new Authority(null, user, "USER"));
+        }
+        User admin = new User(null, "admin", passwordEncoder.encode("123456"), true, null);
+        userRepository.save(admin);
+        authorityRepository.save(new Authority(null, admin, "ADMIN"));
+        userRepository.flush();
+
         for (Territory territory : territoryRepository.findAll()) {
             for (int i = 0; i < 5; i++) {
                 Date date = new Date();
-                revisionRepository.save(new Revision(null, "test1", "test2", 1, "", 1, 1, 1, "test3", "test4", RevisionType.OPO, territory, date));
-                revisionRepository.save(new Revision(null, "test1", "test2", 1, "", 1, 1, 1, "test3", "test4", RevisionType.GTS, territory, date));
+                revisionRepository.save(new Revision(null, 0, "test1", "test2", 1, "", 1, 1, 1, "test3", "test4", RevisionType.OPO, territory, date));
+                revisionRepository.save(new Revision(null, 0, "test1", "test2", 1, "", 1, 1, 1, "test3", "test4", RevisionType.GTS, territory, date));
             }
         }
         revisionRepository.flush();

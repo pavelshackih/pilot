@@ -11,14 +11,14 @@
 <body>
 <div class="container-fluid">
     <p class="lead"></p>
-    <h1 th:text="${territory.name}"></h1>
+    <h1 th:text="${territory.name + ' управление'}"></h1>
 
     <script>
-        $(document).ready(function(event) {
+        $(document).ready(function (event) {
             $('ul.nav.nav-tabs a:first').tab('show'); // Select first tab
-            $('ul.nav.nav-tabs a[href="'+ window.location.hash+ '"]').tab('show'); // Select tab by name if provided in location hash
+            $('ul.nav.nav-tabs a[href="' + window.location.hash + '"]').tab('show'); // Select tab by name if provided in location hash
             $('ul.nav.nav-tabs a[data-toggle="tab"]').on('shown', function (event) {    // Update the location hash to current tab
-                window.location.hash= event.target.hash;
+                window.location.hash = event.target.hash;
             })
         });
     </script>
