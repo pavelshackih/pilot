@@ -63,6 +63,33 @@
                 </td>
             </tr>
         </th:block>
+        <th:block th:if="${not #lists.isEmpty(list)}">
+            <tr>
+                <td>
+                    <p></p>
+                </td>
+                <td colspan="4">
+                    <h4><b>Итого</b></h4>
+                </td>
+                <td>
+                    <h4 th:text="${checkCount}"></h4>
+                </td>
+                <td>
+                    <h4 th:text="${allViolationsCount}"></h4>
+                </td>
+                <td>
+                    <h4 th:text="${fixedViolationsCount}"></h4>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+        </th:block>
         </tbody>
     </table>
 </div>

@@ -21,12 +21,25 @@ constructor(private val territoryRepository: TerritoryRepository, private val re
         val modelAndView = ModelAndView("list")
         val territory = territoryRepository.findOne(id)
         modelAndView.addObject("territory", territory)
-        modelAndView.addObject("opo", revisionRepository
+
+        val opoList = revisionRepository
                 .findByTerritoryIdAndType(territory.id, RevisionType.OPO)
-                .mapIndexed { i, revision -> revision.apply { order = i + 1 } })
-        modelAndView.addObject("gts", revisionRepository
+                .mapIndexed { i, revision -> revision.apply { order = i + 1 } }
+        modelAndView.addObject("opo", opoList)
+
+        modelAndView.addObject("opoCheckCount", opoList.fold(0, { i, revision -> i + revision.checkCount }))
+        modelAndView.addObject("opoAllViolationsCount", opoList.fold(0, { i, revision -> i + revision.allViolationsCount }))
+        modelAndView.addObject("opoFixedViolationsCount", opoList.fold(0, { i, revision -> i + revision.fixedViolationsCount }))
+
+        val gtsList = revisionRepository
                 .findByTerritoryIdAndType(territory.id, RevisionType.GTS)
-                .mapIndexed { i, revision -> revision.apply { order = i + 1 } })
+                .mapIndexed { i, revision -> revision.apply { order = i + 1 } }
+        modelAndView.addObject("gts", gtsList)
+
+        modelAndView.addObject("gtsCheckCount", gtsList.fold(0, { i, revision -> i + revision.checkCount }))
+        modelAndView.addObject("gtsAllViolationsCount", gtsList.fold(0, { i, revision -> i + revision.allViolationsCount }))
+        modelAndView.addObject("gtsFixedViolationsCount", gtsList.fold(0, { i, revision -> i + revision.fixedViolationsCount }))
+
         modelAndView.addObject("headers", Revision.headers)
         return modelAndView
     }
