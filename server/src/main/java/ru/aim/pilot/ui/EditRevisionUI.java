@@ -20,7 +20,7 @@ import java.util.Date;
 
 
 @Title("Редактировние")
-@SpringUI(path = "/edit")
+@SpringUI(path = "/revision/edit")
 @Theme("valo")
 public class EditRevisionUI extends UI {
 

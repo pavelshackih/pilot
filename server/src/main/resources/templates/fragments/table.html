@@ -58,8 +58,8 @@
                     <p th:text="${item.lastUpdateDate}"></p>
                 </td>
                 <td>
-                    <a th:href="@{/edit(terId=${territory.id},id=${item.id}, revType=${type})}">Изменить</a>
-                    <a th:href="@{/revdelete(terId=${territory.id}, revId=${item.id}, revType=${type})}">Удалить</a>
+                    <a th:href="@{/revision/edit(terId=${territory.id},id=${item.id}, revType=${type})}">Изменить</a>
+                    <a th:href="@{/revision/delete(terId=${territory.id}, revId=${item.id}, revType=${type})}">Удалить</a>
                 </td>
             </tr>
         </th:block>
