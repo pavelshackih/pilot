@@ -2,13 +2,14 @@ package ru.aim.pilot.model
 
 import ru.aim.pilot.spring.UiString
 import java.util.*
-import javax.persistence.*
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.Id
+import javax.persistence.ManyToOne
 
 @Entity
 data class Revision(
         @Id @GeneratedValue(strategy = javax.persistence.GenerationType.AUTO) var id: Long? = null,
-        @Transient
-        var order: Int = 0,
         @UiString("Наименование субъекта Российской Федерации")
         var subjectName: String? = null,
         @UiString("Наименование ОПО, ГТС, наименование, адрес, ИНН эксплуатирующей организации")

@@ -75,8 +75,8 @@ public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefre
         for (Territory territory : territoryRepository.findAll()) {
             for (int i = 0; i < 5; i++) {
                 Date date = new Date();
-                revisionRepository.save(new Revision(null, 0, "test1", "test2", 1, "", 1, 1, 1, "test3", "test4", RevisionType.OPO, territory, date));
-                revisionRepository.save(new Revision(null, 0, "test1", "test2", 1, "", 1, 1, 1, "test3", "test4", RevisionType.GTS, territory, date));
+                revisionRepository.save(new Revision(null, "test1", "test2", 1, "", 1, 1, 1, "test3", "test4", RevisionType.OPO, territory, date));
+                revisionRepository.save(new Revision(null, "test1", "test2", 1, "", 1, 1, 1, "test3", "test4", RevisionType.GTS, territory, date));
             }
         }
         revisionRepository.flush();

@@ -23,8 +23,8 @@ constructor(private val territoryRepository: TerritoryRepository, private val re
         modelAndView.addObject("territory", territory)
 
         val opoList = revisionRepository
-                .findByTerritoryIdAndType(territory.id, RevisionType.OPO)
-                .mapIndexed { i, revision -> revision.apply { order = i + 1 } }
+                .findByTerritoryIdAndType(territory.id, RevisionType.OPO);
+
         modelAndView.addObject("opo", opoList)
 
         modelAndView.addObject("opoCheckCount", opoList.fold(0, { i, revision -> i + revision.checkCount }))
@@ -32,8 +32,7 @@ constructor(private val territoryRepository: TerritoryRepository, private val re
         modelAndView.addObject("opoFixedViolationsCount", opoList.fold(0, { i, revision -> i + revision.fixedViolationsCount }))
 
         val gtsList = revisionRepository
-                .findByTerritoryIdAndType(territory.id, RevisionType.GTS)
-                .mapIndexed { i, revision -> revision.apply { order = i + 1 } }
+                .findByTerritoryIdAndType(territory.id, RevisionType.GTS);
         modelAndView.addObject("gts", gtsList)
 
         modelAndView.addObject("gtsCheckCount", gtsList.fold(0, { i, revision -> i + revision.checkCount }))

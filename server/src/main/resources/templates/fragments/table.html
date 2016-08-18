@@ -13,7 +13,7 @@
             <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Экспортировать в Excel
         </button>
     </div>
-    <table class="table table-striped table-bordered">
+    <table class="table table-striped table-bordered" th:id="${'list' + type}">
         <thead>
         <tr class="clickable-row">
             <th:block th:each="h : ${headers}">
@@ -24,9 +24,7 @@
         <tbody>
         <th:block th:each="item : ${list}">
             <tr>
-                <td>
-                    <p th:text="${item.order}"></p>
-                </td>
+                <td></td>
                 <td>
                     <p th:text="${item.subjectName}"></p>
                 </td>
@@ -63,7 +61,10 @@
                 </td>
             </tr>
         </th:block>
+        </tbody>
+
         <th:block th:if="${not #lists.isEmpty(list)}">
+            <tfoot>
             <tr>
                 <td>
                     <p></p>
@@ -89,7 +90,7 @@
                 <td>
                 </td>
             </tr>
+            </tfoot>
         </th:block>
-        </tbody>
     </table>
 </div>
