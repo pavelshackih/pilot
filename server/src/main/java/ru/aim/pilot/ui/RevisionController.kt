@@ -45,8 +45,9 @@ constructor(private val territoryRepository: TerritoryRepository, private val re
     }
 
     @RequestMapping("/delete")
-    internal fun remove(@RequestParam("terId") terId: Long?, @RequestParam("revId") revId: Long?): String {
+    internal fun remove(@RequestParam("terId") terId: Long?, @RequestParam("revId") revId: Long?, @RequestParam("revType") revType: Int): String {
         revisionRepository.delete(revId)
-        return "redirect:/revision/list?id=" + java.lang.Long.toString(terId!!)
+        val type = RevisionType.values()[revType]
+        return "redirect:/revision/list?id=" + java.lang.Long.toString(terId!!) + "#${type.name.toLowerCase()}"
     }
 }
