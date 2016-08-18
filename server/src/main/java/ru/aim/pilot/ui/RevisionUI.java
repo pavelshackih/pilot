@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 @Title("Сведения")
-@SpringUI(path = "/list")
+@SpringUI(path = "/old/list")
 @Theme("valo")
 public class RevisionUI extends UI {
 
