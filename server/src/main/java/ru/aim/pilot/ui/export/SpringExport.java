@@ -5,6 +5,7 @@ import com.vaadin.ui.Table;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
+import ru.aim.pilot.spring.UiStringResolver;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,6 +15,7 @@ import java.math.BigDecimal;
 public class SpringExport extends ExcelExport {
 
     private File tempFile;
+    private UiStringResolver uiStringResolver;
 
     public SpringExport(Table table) {
         super(table);
@@ -22,6 +24,10 @@ public class SpringExport extends ExcelExport {
     @Override
     public void convertTable() {
         super.convertTable();
+    }
+
+    public void setUiStringResolver(UiStringResolver uiStringResolver) {
+        this.uiStringResolver = uiStringResolver;
     }
 
     @Override
@@ -71,7 +77,7 @@ public class SpringExport extends ExcelExport {
                     cell.setCellFormula("SUM(" + cra.formatAsString() + ")");
                 }
             } else if (0 == col) {
-                cell.setCellValue(this.createHelper.createRichTextString("Итого"));
+                cell.setCellValue(this.createHelper.createRichTextString(uiStringResolver.resolveKey("list.total")));
             }
         }
 
