@@ -7,23 +7,22 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.ModelAndView
 import ru.aim.pilot.model.Revision
 import ru.aim.pilot.model.RevisionType
-import ru.aim.pilot.repository.RevisionRepository
-import ru.aim.pilot.repository.TerritoryRepository
+import ru.aim.pilot.service.RevisionService
+import ru.aim.pilot.spring.UiStringResolver
 
 @Controller
 @RequestMapping("/revision")
 class RevisionController
 @Autowired
-constructor(private val territoryRepository: TerritoryRepository, private val revisionRepository: RevisionRepository) {
+constructor(val revisionService: RevisionService, val uiStringResolver: UiStringResolver) {
 
     @RequestMapping("/list")
     internal fun list(@RequestParam("id") id: Long?): ModelAndView {
         val modelAndView = ModelAndView("list")
-        val territory = territoryRepository.findOne(id)
+        val territory = revisionService.findTerritory(id)
         modelAndView.addObject("territory", territory)
 
-        val opoList = revisionRepository
-                .findByTerritoryIdAndType(territory.id, RevisionType.OPO);
+        val opoList = revisionService.findByTerritoryIdAndType(territory?.id, RevisionType.OPO)
 
         modelAndView.addObject("opo", opoList)
 
@@ -31,22 +30,29 @@ constructor(private val territoryRepository: TerritoryRepository, private val re
         modelAndView.addObject("opoAllViolationsCount", opoList.fold(0, { i, revision -> i + revision.allViolationsCount }))
         modelAndView.addObject("opoFixedViolationsCount", opoList.fold(0, { i, revision -> i + revision.fixedViolationsCount }))
 
-        val gtsList = revisionRepository
-                .findByTerritoryIdAndType(territory.id, RevisionType.GTS);
+        val gtsList = revisionService.findByTerritoryIdAndType(territory?.id, RevisionType.GTS)
         modelAndView.addObject("gts", gtsList)
 
         modelAndView.addObject("gtsCheckCount", gtsList.fold(0, { i, revision -> i + revision.checkCount }))
         modelAndView.addObject("gtsAllViolationsCount", gtsList.fold(0, { i, revision -> i + revision.allViolationsCount }))
         modelAndView.addObject("gtsFixedViolationsCount", gtsList.fold(0, { i, revision -> i + revision.fixedViolationsCount }))
 
-        modelAndView.addObject("headers", Revision.headers)
+        modelAndView.addObject("headers", uiStringResolver.resolveFrom(tableHeaders))
         return modelAndView
     }
 
     @RequestMapping("/delete")
     internal fun remove(@RequestParam("terId") terId: Long?, @RequestParam("revId") revId: Long?, @RequestParam("revType") revType: Int): String {
-        revisionRepository.delete(revId)
+        revisionService.deleteRevision(revId)
         val type = RevisionType.values()[revType]
-        return "redirect:/revision/list?id=" + java.lang.Long.toString(terId!!) + "#${type.name.toLowerCase()}"
+        return "redirect:/revision/list?id=${terId.toString()}#${type.name.toLowerCase()}"
     }
+
+    /**
+     * Шапка таблицы, ссылки на поля Revision, по которым определяются строки в колонках через ресурсы
+     */
+    val tableHeaders = listOf(Revision::id, Revision::subjectName, Revision::address, Revision::inn,
+            Revision::typeSafeSystem, Revision::checkCount, Revision::allViolationsCount,
+            Revision::fixedViolationsCount, Revision::violationsDesc, Revision::violationsMark,
+            Revision::lastUpdateDate, null)
 }

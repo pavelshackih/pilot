@@ -59,9 +59,9 @@ public class SpringExport extends ExcelExport {
         for (int col = 0; col < this.getPropIds().size(); ++col) {
             Object propId = this.getPropIds().get(col);
             Cell cell = this.totalsRow.createCell(col);
-            cell.setCellStyle(this.getCellStyle(Integer.valueOf(currentRow), startRow, col, true));
+            cell.setCellStyle(this.getCellStyle(currentRow, startRow, col, true));
             Short poiAlignment = this.getTableHolder().getCellAlignment(propId);
-            CellUtil.setAlignment(cell, this.workbook, poiAlignment.shortValue());
+            CellUtil.setAlignment(cell, this.workbook, poiAlignment);
             Class propType = this.getPropertyType(propId);
             if (this.isNumeric(propType)) {
                 CellRangeAddress cra = new CellRangeAddress(startRow, currentRow - 1, col, col);
@@ -82,7 +82,7 @@ public class SpringExport extends ExcelExport {
     }
 
     private boolean isIntegerLongShortOrBigDecimal(Class<?> type) {
-        return !(!Integer.class.equals(type) && !Integer.TYPE.equals(type)) || (!Long.class.equals(type) && !Long.TYPE.equals(type) ? (!Short.class.equals(type) && !Short.TYPE.equals(type) ? BigDecimal.class.equals(type) || BigDecimal.class.equals(type) : true) : true);
+        return !(!Integer.class.equals(type) && !Integer.TYPE.equals(type)) || (!(!Long.class.equals(type) && !Long.TYPE.equals(type)) || (!(!Short.class.equals(type) && !Short.TYPE.equals(type)) || (BigDecimal.class.equals(type) || BigDecimal.class.equals(type))));
     }
 
     private boolean isDoubleOrFloat(Class<?> type) {

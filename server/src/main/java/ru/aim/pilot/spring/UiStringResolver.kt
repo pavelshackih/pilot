@@ -1,22 +1,26 @@
 package ru.aim.pilot.spring
 
-import kotlin.reflect.KClass
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.MessageSource
+import org.springframework.stereotype.Component
+import ru.aim.pilot.App
 import kotlin.reflect.KProperty
-import kotlin.reflect.declaredMemberProperties
-import kotlin.reflect.jvm.javaField
 
-object UiStringResolver {
+@Component
+open class UiStringResolver
+@Autowired constructor(private val messages: MessageSource) {
 
-    fun resolve(property: KProperty<*>): String? {
-        val uiString = property.javaField?.getAnnotation(UiString::class.java)
-        if (uiString != null) {
-            return uiString.value
-        } else {
-            return null
-        }
-    }
+    fun resolveFrom(property: KProperty<*>?): String =
+            when (property) {
+                null -> ""
+                else -> resolveKey(property.name)
+            }
 
-    fun findUiProperties(clazz: KClass<*>): Collection<KProperty<*>> {
-        return clazz.declaredMemberProperties
-    }
+    fun resolveFrom(properties: List<KProperty<*>?>): List<String> = properties.map { resolveFrom(it) }
+
+    fun resolveKey(key: String?): String =
+            when (key) {
+                null -> ""
+                else -> messages.getMessage(key, null, "", App.DEFAULT_LOCALE)
+            }
 }

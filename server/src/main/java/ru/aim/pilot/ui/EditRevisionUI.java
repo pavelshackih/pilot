@@ -1,7 +1,6 @@
 package ru.aim.pilot.ui;
 
 import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.Title;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
@@ -13,29 +12,29 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
 import ru.aim.pilot.model.Revision;
 import ru.aim.pilot.model.RevisionType;
 import ru.aim.pilot.model.Territory;
-import ru.aim.pilot.repository.RevisionRepository;
-import ru.aim.pilot.repository.TerritoryRepository;
+import ru.aim.pilot.service.RevisionService;
+import ru.aim.pilot.spring.UiStringResolver;
 
 import java.util.Date;
 
-
-@Title("Редактировние")
 @SpringUI(path = "/revision/edit")
 @Theme("valo")
 public class EditRevisionUI extends UI {
 
-    private final RevisionRepository revisionRepository;
-    private final TerritoryRepository territoryRepository;
+    private final RevisionService revisionService;
+    private final RevisionForm revisionForm;
+    private final UiStringResolver uiStringResolver;
 
     private RevisionType revisionType;
     private String terId;
 
-    private Button addNew = new MButton(FontAwesome.HOME, "К списку управлений", this::home);
+    private Button addNewButton = new MButton(FontAwesome.HOME, null, this::home);
 
     @Autowired
-    public EditRevisionUI(RevisionRepository revisionRepository, TerritoryRepository territoryRepository) {
-        this.revisionRepository = revisionRepository;
-        this.territoryRepository = territoryRepository;
+    public EditRevisionUI(RevisionService revisionService, RevisionForm revisionForm, UiStringResolver uiStringResolver) {
+        this.revisionService = revisionService;
+        this.revisionForm = revisionForm;
+        this.uiStringResolver = uiStringResolver;
     }
 
     @Override
@@ -46,15 +45,17 @@ public class EditRevisionUI extends UI {
         Revision revision;
         if (id == null) {
             revision = new Revision();
-            getPage().setTitle("Добавление");
+            getPage().setTitle(uiStringResolver.resolveKey("adding"));
         } else {
-            revision = revisionRepository.findOne(Long.parseLong(id));
+            revision = revisionService.findRevision(Long.parseLong(id));
+            getPage().setTitle(uiStringResolver.resolveKey("edit"));
         }
-        RevisionForm revisionForm = new RevisionForm();
+
+        addNewButton.setCaption(uiStringResolver.resolveKey("goToRootPage"));
         revisionForm.setEntity(revision);
         revisionForm.setSavedHandler(this::saveEntry);
         revisionForm.setResetHandler(this::resetEntry);
-        setContent(new MVerticalLayout(addNew, revisionForm));
+        setContent(new MVerticalLayout(addNewButton, revisionForm));
     }
 
     private void home(Button.ClickEvent event) {
@@ -69,10 +70,10 @@ public class EditRevisionUI extends UI {
         entry.setLastUpdateDate(new Date());
         if (revisionType != null) {
             entry.setType(revisionType);
-            Territory territory = territoryRepository.findOne(Long.parseLong(terId));
+            Territory territory = revisionService.findTerritory(Long.parseLong(terId));
             entry.setTerritory(territory);
         }
-        revisionRepository.saveAndFlush(entry);
+        revisionService.saveRevision(entry);
         redirect();
     }
 
