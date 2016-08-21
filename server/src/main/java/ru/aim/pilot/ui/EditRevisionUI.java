@@ -67,7 +67,6 @@ public class EditRevisionUI extends UI {
     }
 
     private void saveEntry(Revision entry) {
-        entry.setLastUpdateDate(new Date());
         if (revisionType != null) {
             entry.setType(revisionType);
             Territory territory = revisionService.findTerritory(Long.parseLong(terId));

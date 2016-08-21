@@ -7,6 +7,7 @@ import ru.aim.pilot.model.RevisionType
 import ru.aim.pilot.model.Territory
 import ru.aim.pilot.repository.RevisionRepository
 import ru.aim.pilot.repository.TerritoryRepository
+import java.util.*
 
 @Service
 open class RevisionService
@@ -16,7 +17,10 @@ open class RevisionService
 
     fun findRevision(id: Long?): Revision? = revisionRepository.findOne(id)
 
-    fun saveRevision(revision: Revision): Revision? = revisionRepository.saveAndFlush(revision)
+    fun saveRevision(revision: Revision): Revision? {
+        revision.lastUpdateDate = Date()
+        return revisionRepository.saveAndFlush(revision)
+    }
 
     fun findAllTerritories(): List<Territory> = territoryRepository.findAll()
 
