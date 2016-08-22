@@ -22,20 +22,14 @@ constructor(val revisionService: RevisionService, val uiStringResolver: UiString
         val territory = revisionService.findTerritory(id)
         modelAndView.addObject("territory", territory)
 
-        val opoList = revisionService.findByTerritoryIdAndType(territory?.id, RevisionType.OPO)
-
-        modelAndView.addObject("opo", opoList)
-
-        modelAndView.addObject("opoCheckCount", opoList.fold(0, { i, revision -> i + revision.checkCount }))
-        modelAndView.addObject("opoAllViolationsCount", opoList.fold(0, { i, revision -> i + revision.allViolationsCount }))
-        modelAndView.addObject("opoFixedViolationsCount", opoList.fold(0, { i, revision -> i + revision.fixedViolationsCount }))
-
-        val gtsList = revisionService.findByTerritoryIdAndType(territory?.id, RevisionType.GTS)
-        modelAndView.addObject("gts", gtsList)
-
-        modelAndView.addObject("gtsCheckCount", gtsList.fold(0, { i, revision -> i + revision.checkCount }))
-        modelAndView.addObject("gtsAllViolationsCount", gtsList.fold(0, { i, revision -> i + revision.allViolationsCount }))
-        modelAndView.addObject("gtsFixedViolationsCount", gtsList.fold(0, { i, revision -> i + revision.fixedViolationsCount }))
+        RevisionType.values().forEach {
+            val name = it.name.toLowerCase()
+            val list = revisionService.findByTerritoryIdAndType(territory?.id, it)
+            modelAndView.addObject(name, list)
+            modelAndView.addObject("${name}CheckCount", list.fold(0, { i, revision -> i + revision.checkCount }))
+            modelAndView.addObject("${name}AllViolationsCount", list.fold(0, { i, revision -> i + revision.allViolationsCount }))
+            modelAndView.addObject("${name}FixedViolationsCount", list.fold(0, { i, revision -> i + revision.fixedViolationsCount }))
+        }
 
         modelAndView.addObject("headers", uiStringResolver.resolveFrom(tableHeaders))
         return modelAndView
