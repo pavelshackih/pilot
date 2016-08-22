@@ -19,7 +19,7 @@ open class RevisionService
 
     fun saveRevision(revision: Revision): Revision? {
         revision.lastUpdateDate = Date()
-        return revisionRepository.saveAndFlush(revision)
+        return revisionRepository.save(revision)
     }
 
     fun findAllTerritories(): List<Territory> = territoryRepository.findAll()
