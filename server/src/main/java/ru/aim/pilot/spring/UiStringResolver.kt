@@ -10,17 +10,11 @@ import kotlin.reflect.KProperty
 open class UiStringResolver
 @Autowired constructor(private val messages: MessageSource) {
 
-    fun resolveFrom(property: KProperty<*>?): String =
-            when (property) {
-                null -> ""
-                else -> resolveKey(property.name)
-            }
+    fun resolveFrom(property: KProperty<*>?): String = resolveKey(property?.name)
 
     fun resolveFrom(properties: List<KProperty<*>?>): List<String> = properties.map { resolveFrom(it) }
 
-    fun resolveKey(key: String?): String =
-            when (key) {
-                null -> ""
-                else -> messages.getMessage(key, null, "", App.DEFAULT_LOCALE)
-            }
+    fun resolveKey(key: String?): String = messages.getMessage(key, null, "", App.DEFAULT_LOCALE)
+
+    fun resolveKeys(keys: List<String?>): List<String> = keys.map { resolveKey(it) }
 }

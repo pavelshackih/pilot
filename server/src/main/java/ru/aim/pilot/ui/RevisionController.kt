@@ -31,7 +31,7 @@ constructor(val revisionService: RevisionService, val uiStringResolver: UiString
             modelAndView.addObject("${name}FixedViolationsCount", list.fold(0, { i, revision -> i + revision.fixedViolationsCount }))
         }
 
-        modelAndView.addObject("headers", uiStringResolver.resolveFrom(tableHeaders))
+        modelAndView.addObject("headers", uiStringResolver.resolveKeys(tableHeaders))
         return modelAndView
     }
 
@@ -43,10 +43,10 @@ constructor(val revisionService: RevisionService, val uiStringResolver: UiString
     }
 
     /**
-     * Шапка таблицы, ссылки на поля Revision, по которым определяются строки в колонках через ресурсы
+     * Шапка таблицы, ссылки на названия полей Revision, по которым определяются строки в колонках через ресурсы
      */
-    val tableHeaders = listOf(Revision::id, Revision::subjectName, Revision::address, Revision::inn,
-            Revision::typeSafeSystem, Revision::checkCount, Revision::allViolationsCount,
-            Revision::fixedViolationsCount, Revision::violationsDesc, Revision::violationsMark,
-            Revision::lastUpdateDate, null)
+    val tableHeaders = listOf(Revision::id.name, Revision::subjectName.name, Revision::address.name, Revision::inn.name,
+            Revision::typeSafeSystem.name, Revision::checkCount.name, Revision::allViolationsCount.name,
+            Revision::fixedViolationsCount.name, Revision::violationsDesc.name, Revision::violationsMark.name,
+            Revision::lastUpdateDate.name, null)
 }
