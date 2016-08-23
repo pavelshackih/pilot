@@ -37,12 +37,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().and()
                 .authorizeRequests()
                 .anyRequest().authenticated()
-                .antMatchers("/").permitAll()
                 .and()
                 .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/");
-//                .antMatchers("/greeting").hasAuthority("ADMIN")
-//                .antMatchers("/rev").hasAuthority("USER")
-//                .antMatchers("/rev").hasAuthority("ADMIN");
     }
 
     @Bean

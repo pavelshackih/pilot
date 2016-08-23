@@ -17,7 +17,7 @@ class HomeController
 @Autowired
 constructor(private val revisionService: RevisionService) {
 
-    @RequestMapping("/", method = arrayOf(RequestMethod.GET))
+    @RequestMapping(value = "/", method = arrayOf(RequestMethod.GET))
     fun index(model: Model, httpSession: HttpSession): String {
         val territoryId = httpSession.getTerritoryId(null)
         /**
