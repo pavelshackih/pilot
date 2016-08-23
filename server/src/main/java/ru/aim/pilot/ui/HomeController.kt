@@ -19,7 +19,7 @@ constructor(private val revisionService: RevisionService) {
 
     @RequestMapping(value = "/", method = arrayOf(RequestMethod.GET))
     fun index(model: Model, httpSession: HttpSession): String {
-        val territoryId = httpSession.getTerritoryId(null)
+        val territoryId = httpSession.getTerritoryId()
         /**
          * Если в сессии пользователя не проставлена ссылка на управление
          * значит это админ и отображаем список всех управлений
