@@ -63,7 +63,8 @@ public class DatabaseFillerOnStartup implements ApplicationListener<ContextRefre
 
         List<Territory> list = territoryRepository.findAll();
         for (int i = 0; i < list.size(); i++) {
-            User user = new User(null, "user" + (i + 1), passwordEncoder.encode("123456"), true, list.get(i));
+            String userName = "user" + (i + 1);
+            User user = new User(null, userName, passwordEncoder.encode("123456"), true, list.get(i));
             userRepository.save(user);
             authorityRepository.save(new Authority(null, user, "USER"));
         }

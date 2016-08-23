@@ -7,11 +7,14 @@ import ru.aim.pilot.model.RevisionType
 import ru.aim.pilot.model.Territory
 import ru.aim.pilot.repository.RevisionRepository
 import ru.aim.pilot.repository.TerritoryRepository
+import ru.aim.pilot.repository.UserRepository
 import java.util.*
 
 @Service
 open class RevisionService
-@Autowired constructor(private val territoryRepository: TerritoryRepository, private val revisionRepository: RevisionRepository) {
+@Autowired constructor(private val territoryRepository: TerritoryRepository,
+                       private val revisionRepository: RevisionRepository,
+                       private val userRepository: UserRepository) {
 
     fun findTerritory(id: Long?): Territory? = territoryRepository.findOne(id)
 
@@ -27,4 +30,6 @@ open class RevisionService
     fun findByTerritoryIdAndType(id: Long?, type: RevisionType?): List<Revision> = revisionRepository.findByTerritoryIdAndType(id, type)
 
     fun deleteRevision(id: Long?) = revisionRepository.delete(id)
+
+    fun findTerritoryByUserName(name: String?): Territory? = userRepository.findByName(name)?.territory
 }

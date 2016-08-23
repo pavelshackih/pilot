@@ -10,6 +10,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 
 import java.nio.charset.Charset;
 import java.util.Locale;
@@ -19,16 +20,7 @@ public class App extends SpringBootServletInitializer {
 
     public static final Locale DEFAULT_LOCALE = Locale.forLanguageTag("ru");
 
-    /**
-     * Comma-separated list of basenames, each following the ResourceBundle convention.
-     * Essentially a fully-qualified classpath location. If it doesn't contain a package
-     * qualifier (such as "org.mypackage"), it will be resolved from the classpath root.
-     */
     private static final String BASENAME = "messages";
-
-    /**
-     * Message bundles encoding.
-     */
     private Charset encoding = Charset.forName("UTF-8");
 
     @Override
@@ -61,5 +53,10 @@ public class App extends SpringBootServletInitializer {
         messageSource.setCacheSeconds(-1);
         messageSource.setAlwaysUseMessageFormat(false);
         return messageSource;
+    }
+
+    @Bean
+    public SpringSecurityDialect springSecurityDialect() {
+        return new SpringSecurityDialect();
     }
 }

@@ -34,8 +34,9 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     compile 'org.springframework.boot:spring-boot-starter-tomcat'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
 
+    compile group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity4', version: '2.1.2.RELEASE'
+    compile group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-java8time', version: '2.1.0.RELEASE'
 
     compile("com.vaadin:vaadin-spring-boot-starter:1.0.0") {
         exclude group: "com.vaadin", module: "vaadin-client"
@@ -64,5 +65,4 @@ dependencies {
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile group: 'junit', name: 'junit', version: '4.11'
 
-    compile group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-java8time', version: '2.1.0.RELEASE'
 }

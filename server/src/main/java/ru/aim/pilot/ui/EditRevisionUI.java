@@ -14,8 +14,7 @@ import ru.aim.pilot.model.RevisionType;
 import ru.aim.pilot.model.Territory;
 import ru.aim.pilot.service.RevisionService;
 import ru.aim.pilot.spring.UiStringResolver;
-
-import java.util.Date;
+import ru.aim.pilot.spring.UserSessionInterceptor;
 
 @SpringUI(path = "/revision/edit")
 @Theme("valo")
@@ -29,6 +28,7 @@ public class EditRevisionUI extends UI {
     private String terId;
 
     private Button addNewButton = new MButton(FontAwesome.HOME, null, this::home);
+    private boolean isAdmin;
 
     @Autowired
     public EditRevisionUI(RevisionService revisionService, RevisionForm revisionForm, UiStringResolver uiStringResolver) {
@@ -39,8 +39,15 @@ public class EditRevisionUI extends UI {
 
     @Override
     protected void init(VaadinRequest request) {
+        Long territoryId = (Long) request.getWrappedSession().getAttribute(UserSessionInterceptor.TERRITORY_ID);
+        if (territoryId != null) {
+            terId = Long.toString(territoryId);
+        } else {
+            terId = request.getParameter("terId");
+            // Если айди управления передали через параметр, то значит это админ
+            isAdmin = true;
+        }
         String id = request.getParameter("id");
-        terId = request.getParameter("terId");
         revisionType = RevisionType.values()[Integer.parseInt(request.getParameter("revType"))];
         Revision revision;
         if (id == null) {
@@ -51,7 +58,8 @@ public class EditRevisionUI extends UI {
             getPage().setTitle(uiStringResolver.resolveKey("edit"));
         }
 
-        addNewButton.setCaption(uiStringResolver.resolveKey("goToRootPage"));
+        String homeKey = isAdmin ? "goToRootPage" : "back";
+        addNewButton.setCaption(uiStringResolver.resolveKey(homeKey));
         revisionForm.setEntity(revision);
         revisionForm.setSavedHandler(this::saveEntry);
         revisionForm.setResetHandler(this::resetEntry);
@@ -59,7 +67,11 @@ public class EditRevisionUI extends UI {
     }
 
     private void home(Button.ClickEvent event) {
-        getUI().getPage().setLocation("/");
+        if (isAdmin) {
+            getUI().getPage().setLocation("/");
+        } else {
+            getUI().getPage().setLocation("/revision/list");
+        }
     }
 
     private void resetEntry(Revision entry) {

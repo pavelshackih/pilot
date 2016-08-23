@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.aim.pilot.model.Revision;
 import ru.aim.pilot.model.RevisionType;
 import ru.aim.pilot.service.RevisionService;
+import ru.aim.pilot.ui.PackageKt;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -30,7 +32,8 @@ public class ExportController {
     }
 
     @RequestMapping(value = "/export", method = RequestMethod.GET)
-    void export(@RequestParam("terId") Long terId, @RequestParam("revType") int revType, HttpServletResponse response) throws Exception {
+    void export(@RequestParam(value = "terId", required = false) Long terId, @RequestParam("revType") int revType, HttpSession httpSession, HttpServletResponse response) throws Exception {
+        Long territoryId = PackageKt.getTerritoryId(httpSession, terId);
         RevisionType revisionType = RevisionType.values()[revType];
         List<Revision> list = revisionService.findByTerritoryIdAndType(terId, revisionType);
         File file = excelExportService.export(list);
